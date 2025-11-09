@@ -1,0 +1,49 @@
+@import "tailwindcss";
+body {
+  background: linear-gradient(180deg, #0A2E1F 0%, #102B1E 100%);
+}
+
+
+/* Custom theme colors */
+:root {
+  --forest: #09110D;
+  --darkGreen: #0B3221;
+  --primaryGreen: #135E3D;
+  --accent: #1AA06D;
+  --leaf: #1AA06D;
+  --navbg: #a8afa7;
+}
+
+/* Hero gradient class */
+.bg-hero-gradient {
+  background: linear-gradient(to bottom, var(--forest), var(--leaf));
+}
+
+/* Buttons */
+.btn-accent {
+  background-color: var(--accent);
+  color: var(--forest);
+}
+
+.btn-accent:hover {
+  background-color: var(--primaryGreen);
+  color: white;
+}
+
+.btn-outline-accent {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+}
+
+.btn-outline-accent:hover {
+  background-color: var(--accent);
+  color: var(--forest);
+}
+
+/* Dropdown hover */
+.dropdown-item:hover {
+  background-color: var(--primaryGreen);
+  color: white;
+}
+
+
