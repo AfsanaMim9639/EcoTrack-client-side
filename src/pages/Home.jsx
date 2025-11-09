@@ -1,5 +1,6 @@
 import React from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 
 const Home = () => {
   return (
@@ -14,6 +15,8 @@ const Home = () => {
           This is your home page. Navigation is working and fixed at the top.
         </p>
       </main>
+
+      <Footer />
     </div>
   );
 };
