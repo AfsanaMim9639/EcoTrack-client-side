@@ -2,6 +2,7 @@ import React from "react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
+import LiveStatistics from "../components/LiveStatistics";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       {/* Page content */}
       <main className="pt-24 max-w-7xl mx-auto px-6">
         <HeroSection />
+        <LiveStatistics />
       </main>
 
       <Footer />
