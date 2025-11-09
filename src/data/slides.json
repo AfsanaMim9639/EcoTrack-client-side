@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "title": "Plant 10 Trees",
+    "subtitle": "Join our eco community",
+    "description": "Join the community to plant 10 trees this month. Every tree you plant helps reduce carbon footprint, supports local biodiversity, and improves air quality.",
+    "image": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=1200&q=80&fit=crop",
+    "ctaText": "View Challenge"
+  },
+  {
+    "id": 2,
+    "title": "Reduce Plastic Usage",
+    "subtitle": "Say no to single-use plastics",
+    "description": "Take actionable steps to minimize single-use plastics in your daily life. Learn alternatives, reduce waste, and help protect oceans and wildlife from plastic pollution.",
+    "image": "https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=1200&q=80&fit=crop",
+    "ctaText": "Explore Challenge"
+  },
+  {
+    "id": 3,
+    "title": "Clean Your Neighborhood",
+    "subtitle": "Participate in local cleanup",
+    "description": "Join community cleanup drives to remove litter, promote recycling, and create cleaner streets and parks.",
+    "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&q=80&fit=crop",
+    "ctaText": "Join Now"
+  },
+  {
+    "id": 4,
+    "title": "Save Water",
+    "subtitle": "Small steps, big impact",
+    "description": "Adopt water-saving habits at home and workplace. Reduce wastage through mindful usage, repair leaks, and promote water conservation.",
+    "image": "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=1200&q=80&fit=crop",
+    "ctaText": "Learn How"
+  },
+  {
+    "id": 5,
+    "title": "Switch to Renewable Energy",
+    "subtitle": "Clean energy for a brighter future",
+    "description": "Shift towards renewable energy sources like solar and wind. Reduce dependency on fossil fuels, cut down carbon emissions, and support sustainable energy adoption.",
+    "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80&fit=crop",
+    "ctaText": "Start Today"
+  },
+  {
+    "id": 6,
+    "title": "Support Local Eco Businesses",
+    "subtitle": "Shop consciously",
+    "description": "Promote sustainable products by supporting eco-friendly businesses in your area. Encourage green practices and help your community thrive sustainably.",
+    "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80&fit=crop",
+    "ctaText": "Discover More"
+  },
+  {
+    "id": 7,
+    "title": "Compost Organic Waste",
+    "subtitle": "Turn waste into resources",
+    "description": "Learn to compost food scraps and yard waste to create natural fertilizer. Reduce landfill waste and improve soil health.",
+    "image": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1200&q=80&fit=crop",
+    "ctaText": "Start Composting"
+  },
+  {
+    "id": 8,
+    "title": "Use Public Transport",
+    "subtitle": "Reduce carbon footprint",
+    "description": "Opt for public transport, cycling, or walking instead of driving alone to reduce greenhouse gas emissions.",
+    "image": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&q=80&fit=crop",
+    "ctaText": "Take Action"
+  }
+]
