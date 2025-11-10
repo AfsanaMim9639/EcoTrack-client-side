@@ -7,6 +7,7 @@ import ActiveChallenges from "../components/ActiveChallenges";
 import RecentTips from "../components/RecentTips";
 import UpcomingEvents from "../components/UpcomingEvents";
 import WhyGoGreen from "../components/WhyGoGreen";
+import HowItWorks from "../components/HowItWorks";
 
 const Home = () => {
   return (
@@ -22,6 +23,7 @@ const Home = () => {
         <RecentTips />
         <UpcomingEvents />
         <WhyGoGreen />
+        <HowItWorks />
       </main>
 
       <Footer />
