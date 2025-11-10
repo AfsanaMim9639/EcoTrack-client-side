@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
 import LiveStatistics from "../components/LiveStatistics";
 import ActiveChallenges from "../components/ActiveChallenges";
+import RecentTips from "../components/RecentTips";
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
         <HeroSection />
         <LiveStatistics />
         <ActiveChallenges />
+        <RecentTips />
       </main>
 
       <Footer />

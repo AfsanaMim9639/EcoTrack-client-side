@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Use Reusable Water Bottles",
+    "authorName": "Sarah Ahmed",
+    "upvotes": 120,
+    "createdAt": "2025-01-12",
+    "preview": "Switching to stainless or BPA-free reusable bottles reduces plastic waste."
+  },
+  {
+    "id": 2,
+    "title": "Carry a Cloth Bag",
+    "authorName": "Akash Hossain",
+    "upvotes": 95,
+    "createdAt": "2025-01-15",
+    "preview": "Using cloth bags instead of plastic bags decreases landfill pressure."
+  },
+  {
+    "id": 3,
+    "title": "Reduce Electricity Usage",
+    "authorName": "Maria Khan",
+    "upvotes": 88,
+    "createdAt": "2025-01-17",
+    "preview": "Turn off lights and fans when not needed; it saves energy and money."
+  },
+  {
+    "id": 4,
+    "title": "Compost Kitchen Waste",
+    "authorName": "Jatin Roy",
+    "upvotes": 110,
+    "createdAt": "2025-01-18",
+    "preview": "Vegetable peels, eggshells, and tea leaves can be turned into organic fertilizer."
+  },
+  {
+    "id": 5,
+    "title": "Walk for Short Distances",
+    "authorName": "Riya Sultana",
+    "upvotes": 130,
+    "createdAt": "2025-01-20",
+    "preview": "Avoiding short car rides reduces carbon footprint and improves health."
+  }
+]
