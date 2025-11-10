@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "title": "Plant 10 Trees",
+    "category": "Environment",
+    "metric": "5,200 kg CO₂ saved",
+    "image": "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 2,
+    "title": "Reduce Plastic Usage",
+    "category": "Sustainability",
+    "metric": "1,320 kg plastic reduced",
+    "image": "https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 3,
+    "title": "Community Cleanups",
+    "category": "Local Action",
+    "metric": "12 neighborhoods cleaned",
+    "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 4,
+    "title": "Switch to Renewable Energy",
+    "category": "Energy",
+    "metric": "3,400 kWh saved",
+    "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 5,
+    "title": "Support Local Eco Businesses",
+    "category": "Community",
+    "metric": "20 businesses supported",
+    "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 6,
+    "title": "Compost Organic Waste",
+    "category": "Waste Reduction",
+    "metric": "850 kg waste diverted",
+    "image": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 7,
+    "title": "Water Conservation",
+    "category": "Resources",
+    "metric": "45,000 liters saved",
+    "image": "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 8,
+    "title": "Bike to Work Challenge",
+    "category": "Transportation",
+    "metric": "2,100 km cycled",
+    "image": "https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 9,
+    "title": "Zero Waste Week",
+    "category": "Lifestyle",
+    "metric": "680 kg waste prevented",
+    "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 10,
+    "title": "Reforestation Drive",
+    "category": "Environment",
+    "metric": "1,500 saplings planted",
+    "image": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 11,
+    "title": "Eco-Friendly Products",
+    "category": "Sustainability",
+    "metric": "340 households switched",
+    "image": "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=1200&q=80&fit=crop"
+  },
+  {
+    "id": 12,
+    "title": "Green Rooftop Gardens",
+    "category": "Urban Planning",
+    "metric": "8 rooftops transformed",
+    "image": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80&fit=crop"
+  }
+]

@@ -3,6 +3,7 @@ import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
 import LiveStatistics from "../components/LiveStatistics";
+import ActiveChallenges from "../components/ActiveChallenges";
 
 const Home = () => {
   return (
@@ -14,6 +15,7 @@ const Home = () => {
       <main className="pt-24 max-w-7xl mx-auto px-6">
         <HeroSection />
         <LiveStatistics />
+        <ActiveChallenges />
       </main>
 
       <Footer />
