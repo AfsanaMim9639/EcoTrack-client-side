@@ -46,4 +46,24 @@ body {
   color: white;
 }
 
+/*For 404 pages*/
+/* index.css or global CSS */
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10%) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+.animate-fall {
+  animation: fall linear infinite;
+}
 
