@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Community Tree Plantation",
+    "date": "2025-02-12",
+    "location": "Dhanmondi Lake Park",
+    "description": "Join us in planting 200+ trees to increase local green coverage."
+  },
+  {
+    "id": 2,
+    "title": "Beach Cleanup Drive",
+    "date": "2025-03-02",
+    "location": "Cox's Bazar Beach",
+    "description": "Help clean plastic waste and protect marine life from pollution."
+  },
+  {
+    "id": 3,
+    "title": "Eco-Friendly Workshop",
+    "date": "2025-03-25",
+    "location": "Dhaka University Campus",
+    "description": "Learn sustainable habits and composting techniques at home."
+  },
+  {
+    "id": 4,
+    "title": "Green Cycling Marathon",
+    "date": "2025-04-10",
+    "location": "Gulshan to Banani Route",
+    "description": "Promote zero-emission mobility by joining our green cycling event."
+  }
+]
