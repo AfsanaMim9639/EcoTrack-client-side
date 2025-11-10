@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChallengesPage from "./pages/ChallengesPage";
-
+import ChallengeDetailPage from "./pages/ChallengeDetailPage";
 function App() {
   return (
     <Router>
@@ -13,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/challenges" element={<ChallengesPage />} />
+        <Route path="/challenges/:id" element={<ChallengeDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>

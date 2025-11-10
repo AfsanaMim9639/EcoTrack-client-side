@@ -1,4 +1,3 @@
-// src/components/ActiveChallenges.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import activeChallengesData from "../data/activeChallenges.json";
@@ -15,7 +14,6 @@ const ActiveChallenges = ({ showAll = false, pageTitle }) => {
     <section className="w-full py-16 px-6 md:px-12 bg-forest text-white">
       <div className="max-w-7xl mx-auto">
 
-        {/* Dynamic Header */}
         {pageTitle && (
           <h2 className={`text-3xl md:text-4xl font-bold mb-16 text-accent text-center`}>
             {pageTitle}
@@ -24,7 +22,11 @@ const ActiveChallenges = ({ showAll = false, pageTitle }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-12">
           {displayedChallenges.map((challenge) => (
-            <div key={challenge.id} className="flex items-center justify-center">
+            <div
+              key={challenge.id}
+              className="flex items-center justify-center cursor-pointer" // cursor pointer
+              onClick={() => navigate(`/challenges/${challenge.id}`)} // navigate to detail page
+            >
               {/* Challenge Card */}
               <div className="relative">
                 <div className="flex items-center justify-center">
@@ -55,8 +57,10 @@ const ActiveChallenges = ({ showAll = false, pageTitle }) => {
                       <h3 className="text-base md:text-lg font-bold text-white mb-1">{challenge.title}</h3>
                       <p className="text-accent font-semibold text-xs mb-2">{challenge.category}</p>
                       <p className="text-white/80 text-xs leading-relaxed mb-2">{challenge.metric}</p>
-                      <button className="w-full px-3 py-1 rounded-lg font-medium text-xs transition-all duration-300 hover:scale-105"
-                        style={{ background: "var(--accent)", color: "white", boxShadow: "0 4px 15px rgba(74, 222, 128, 0.3)" }}>
+                      <button
+                        className="w-full px-3 py-1 rounded-lg font-medium text-xs transition-all duration-300 hover:scale-105"
+                        style={{ background: "var(--accent)", color: "white", boxShadow: "0 4px 15px rgba(74, 222, 128, 0.3)" }}
+                      >
                         Join
                       </button>
                     </div>
@@ -67,7 +71,6 @@ const ActiveChallenges = ({ showAll = false, pageTitle }) => {
           ))}
         </div>
 
-        {/* See More Button */}
         {!showAll && (
           <div className="text-center mt-16">
             <button
