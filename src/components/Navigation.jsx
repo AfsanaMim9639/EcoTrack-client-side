@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import logo from "../assets/images/header-icon.png"; // use forward slashes
+import logo from "../assets/images/header-icon.png"; 
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,50 +11,65 @@ const Navigation = () => {
 
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          {/* Icon Image */}
-          <img
-            src={logo} // use imported variable
-            alt="EcoTrack Icon"
-            className="w-6 h-6"
-          />
-          
-          {/* Logo Text */}
-          <h1 className="text-2xl font-semibold tracking-wide">
-            Eco<span className="text-accent text-[#135E3D]">Track</span>
-          </h1>
+            <Link to="/" className="flex items-center space-x-2">
+                {/* Icon Image */}
+                <img
+                src={logo}
+                alt="EcoTrack Icon"
+                className="w-6 h-6"
+                />
+                
+                {/* Logo Text */}
+                <h1 className="text-2xl font-semibold tracking-wide">
+                Eco<span className="text-accent text-[#135E3D]">Track</span>
+                </h1>
+            </Link>
         </div>
 
         {/* Navigation Links */}
-        <ul
-          className="
-            hidden md:flex space-x-6 font-medium
-            bg-white/10 backdrop-blur-md
-            rounded-full px-3 py-1
-          "
-        >
-          {["Home", "Challenges", "My Activities"].map((item) => (
-            <li
-              key={item}
-              className="px-3 py-1 rounded-full hover:bg-white/10 cursor-pointer transition-colors duration-300"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
+        <ul className="hidden md:flex space-x-6 font-medium bg-white/10 backdrop-blur-md rounded-full px-3 py-1">
+  <li>
+    <Link
+      to="/"
+      className="px-3 py-1 rounded-full hover:bg-white/10 cursor-pointer transition-colors duration-300"
+    >
+      Home
+    </Link>
+  </li>
+  <li>
+    <Link
+      to="/challenges"
+      className="px-3 py-1 rounded-full hover:bg-white/10 cursor-pointer transition-colors duration-300"
+    >
+      Challenges
+    </Link>
+  </li>
+  <li>
+    <Link
+      to="/my-activities"
+      className="px-3 py-1 rounded-full hover:bg-white/10 cursor-pointer transition-colors duration-300"
+    >
+      My Activities
+    </Link>
+  </li>
+</ul>
 
         {/* Right Side Auth / Profile */}
-        <div className="relative">
-          {!isLoggedIn ? (
+             <div className="relative">
+                    {!isLoggedIn ? (
             <div className="flex space-x-3">
-              <button
-                className="px-4 py-2 rounded-full border border-accent hover:bg-accent hover:text-forest transition"
-                onClick={() => setIsLoggedIn(true)}
-              >
+            <Link
+                to="/login"
+                className="px-4 py-2 rounded-full border border-accent hover:bg-accent hover:text-forest transition flex items-center justify-center"
+            >
                 Login
-              </button>
-              <button className="px-4 py-2 rounded-full bg-accent text-forest font-medium hover:bg-accent/80 transition">
+            </Link>
+            <Link
+                to="/register"
+                className="px-4 py-2 rounded-full bg-accent text-forest font-medium hover:bg-accent/80 transition flex items-center justify-center"
+            >
                 Register
-              </button>
+            </Link>
             </div>
           ) : (
             <div className="relative group overflow-visible">
