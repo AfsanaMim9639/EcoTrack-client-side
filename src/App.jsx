@@ -7,6 +7,8 @@ import RegisterPage from "./pages/RegisterPage";
 import ChallengesPage from "./pages/ChallengesPage";
 import ChallengeDetailPage from "./pages/ChallengeDetailPage";
 import AddChallengePage from "./pages/AddChallengePage";
+import JoinChallengePage from "./pages/JoinChallengePage";
+import MyActivitiesPage from "./pages/MyActivitiesPage";
 function App() {
   const isLoggedIn = true; 
   return (
@@ -19,6 +21,14 @@ function App() {
         <Route
           path="/challenges/add"
           element={<AddChallengePage isLoggedIn={isLoggedIn} />}
+        />
+        <Route
+          path="/challenges/join/:id"
+          element={<JoinChallengePage isLoggedIn={isLoggedIn} />}
+        />
+        <Route
+          path="/my-activities"
+          element={<MyActivitiesPage isLoggedIn={isLoggedIn} />}
         />
         
         <Route path="/login" element={<LoginPage />} />
