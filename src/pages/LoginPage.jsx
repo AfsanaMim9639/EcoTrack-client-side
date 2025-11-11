@@ -2,66 +2,90 @@ import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
+import { auth } from "../firebase/firebase.config";
+
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Protected route redirect info
+  // redirect after login
   const from = location.state?.from?.pathname || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // ✅ Email + Password Login
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Fake login logic (replace with real API call)
-    setTimeout(() => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+
+      toast.success("Login successful!");
+      navigate(from, { replace: true });
+
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Invalid email or password");
+    } finally {
       setLoading(false);
-      if (email === "user@example.com" && password === "123456") {
-        toast.success("Login successful!");
-        navigate(from, { replace: true }); // 🔹 redirect to intended route
-      } else {
-        toast.error("Invalid email or password");
-      }
-    }, 1500);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    toast("Google login clicked!", { icon: "⚡" });
-    // Integrate Google OAuth here
+  // ✅ Google OAuth Login
+  const handleGoogleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+
+      toast.success("Logged in with Google!");
+      navigate(from, { replace: true });
+
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Google login failed!");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-hero-gradient p-6">
       <Toaster position="top-right" />
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl text-white">
-        {/* Title */}
-        <h1 className="text-3xl font-bold text-center mb-6">Login to EcoTrack</h1>
 
-        {/* Form */}
+      <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-xl text-white">
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Login to EcoTrack
+        </h1>
+
+        {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             placeholder="Email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full px-4 py-3 rounded-xl bg-white/20 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-accent transition"
           />
+
           <input
             type="password"
             placeholder="Password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             className="w-full px-4 py-3 rounded-xl bg-white/20 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-accent transition"
           />
 
-          {/* Login button */}
           <button
             type="submit"
             className={`w-full py-3 rounded-xl bg-accent text-forest font-semibold hover:bg-accent/90 transition flex justify-center items-center gap-2 ${

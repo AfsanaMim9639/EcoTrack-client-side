@@ -1,14 +1,15 @@
-// src/components/PrivateRoute.jsx
-import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
-const PrivateRoute = ({ isLoggedIn, children }) => {
+const PrivateRoute = ({ children }) => {
+  const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
-  if (!isLoggedIn) {
-    // redirect to login and save intended route
+  if (loading) return <div className="text-center p-6">Loading...</div>;
+
+  if (!user)
     return <Navigate to="/login" state={{ from: location }} replace />;
-  }
 
   return children;
 };

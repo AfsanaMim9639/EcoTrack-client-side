@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { FaGoogle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { auth, googleProvider } from "../firebase/firebase.config";
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup } from "firebase/auth";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,6 +30,7 @@ const RegisterPage = () => {
     return "";
   };
 
+  // Email/Password Registration
   const handleRegister = async (e) => {
     e.preventDefault();
     const error = validatePassword(password);
@@ -33,22 +38,39 @@ const RegisterPage = () => {
     if (error) return;
 
     setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-    // Fake registration logic (replace with real API)
-    setTimeout(() => {
-      setLoading(false);
-      if (email && password) {
-        toast.success("Registration successful!");
-        navigate("/"); // redirect to Home
-      } else {
-        toast.error("Something went wrong. Try again.");
-      }
-    }, 1500);
+      // Update displayName and photoURL
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: photo || null,
+      });
+
+      toast.success("Registration successful!");
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+    setLoading(false);
   };
 
-  const handleGoogleRegister = () => {
-    toast("Google register clicked!", { icon: "⚡" });
-    // Integrate Google OAuth here
+  // Google Registration/Login
+  const handleGoogleRegister = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log(user);
+      toast.success("Logged in with Google!");
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -100,9 +122,7 @@ const RegisterPage = () => {
 
           <button
             type="submit"
-            className={`w-full py-3 rounded-xl bg-accent text-forest font-semibold hover:bg-accent/90 transition flex justify-center items-center gap-2 ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full py-3 rounded-xl bg-accent text-forest font-semibold hover:bg-accent/90 transition flex justify-center items-center gap-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
             disabled={loading}
           >
             {loading ? "Registering..." : "Register"}

@@ -6,6 +6,11 @@ const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
   const [isExpanded, setIsExpanded] = useState(showAll);
   const navigate = useNavigate();
 
+  // If user is not logged in, render nothing or redirect
+  if (!isLoggedIn) {
+    return null; // or navigate("/login") if you want automatic redirect
+  }
+
   const displayedChallenges = isExpanded
     ? activeChallengesData
     : activeChallengesData.slice(0, 6);
@@ -15,7 +20,7 @@ const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
       <div className="max-w-7xl mx-auto">
 
         {pageTitle && (
-          <h2 className={`text-3xl md:text-4xl font-bold mb-16 text-accent text-center`}>
+          <h2 className="text-3xl md:text-4xl font-bold mb-16 text-accent text-center">
             {pageTitle}
           </h2>
         )}
@@ -23,11 +28,9 @@ const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-12">
           {displayedChallenges.map((challenge) => (
             <div key={challenge.id} className="flex items-center justify-center">
-              {/* Card wrapper */}
               <div className="relative">
                 <div className="flex items-center justify-center">
-
-                  {/* Challenge Image (clickable for details) */}
+                  {/* Challenge Image */}
                   <div
                     className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 z-10 cursor-pointer"
                     style={{
@@ -61,12 +64,8 @@ const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
                       {/* Join Button */}
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent card click
-                          if (isLoggedIn) {
-                            navigate(`/challenges/join/${challenge.id}`);
-                          } else {
-                            navigate("/login");
-                          }
+                          e.stopPropagation();
+                          navigate(`/challenges/join/${challenge.id}`);
                         }}
                         className="w-full px-3 py-1 rounded-lg font-medium text-xs transition-all duration-300 hover:scale-105"
                         style={{

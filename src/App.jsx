@@ -13,10 +13,9 @@ import MyActivitiesPage from "./pages/MyActivitiesPage";
 import MyActivityDetailPage from "./pages/MyActivityDetailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  const isLoggedIn = true; // replace with actual auth logic
-
   // Dummy user progress data
   const userProgress = [
     { id: 1, progress: 60 },
@@ -25,53 +24,55 @@ function App() {
   ];
 
   return (
-    <Router>
-      <Navigation />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/challenges" element={<ChallengesPage />} />
-        <Route path="/challenges/:id" element={<ChallengeDetailPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+    <AuthProvider>
+      <Router>
+        <Navigation />
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<Home />} />
+          <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/challenges/:id" element={<ChallengeDetailPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="*" element={<NotFoundPage />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/challenges/add"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <AddChallengePage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/challenges/join/:id"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <JoinChallengePage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/my-activities"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <MyActivitiesPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/my-activities/:id"
-          element={
-            <PrivateRoute isLoggedIn={isLoggedIn}>
-              <MyActivityDetailPage userProgressData={userProgress} />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </Router>
+          {/* Protected */}
+          <Route
+            path="/challenges/add"
+            element={
+              <PrivateRoute>
+                <AddChallengePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/challenges/join/:id"
+            element={
+              <PrivateRoute>
+                <JoinChallengePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/my-activities"
+            element={
+              <PrivateRoute>
+                <MyActivitiesPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/my-activities/:id"
+            element={
+              <PrivateRoute>
+                <MyActivityDetailPage userProgressData={userProgress} />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

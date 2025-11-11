@@ -1,13 +1,77 @@
 // src/pages/MyActivityDetailPage.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { auth } from "../firebase/firebase.config";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 import activeChallengesData from "../data/activeChallenges.json";
 
-const MyActivityDetailPage = ({ isLoggedIn, userProgressData }) => {
+const db = getFirestore();
+
+const MyActivityDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoggedIn) {
+  // Firebase auth listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch user progress for this challenge
+  useEffect(() => {
+    const fetchProgress = async () => {
+      if (!user) return;
+
+      setLoading(true);
+      try {
+        const progressRef = collection(db, "userProgress");
+        const q = query(progressRef, where("uid", "==", user.uid), where("challengeId", "==", Number(id)));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setProgress(querySnapshot.docs[0].data().progress);
+        } else {
+          setProgress(0);
+        }
+      } catch (err) {
+        console.error("Error fetching progress:", err);
+      }
+      setLoading(false);
+    };
+
+    fetchProgress();
+  }, [user, id]);
+
+  const challenge = activeChallengesData.find((c) => c.id.toString() === id);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-forest text-white">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-forest text-white text-center">
         <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
@@ -22,7 +86,6 @@ const MyActivityDetailPage = ({ isLoggedIn, userProgressData }) => {
     );
   }
 
-  const challenge = activeChallengesData.find(c => c.id.toString() === id);
   if (!challenge) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-forest text-white text-center">
@@ -37,16 +100,25 @@ const MyActivityDetailPage = ({ isLoggedIn, userProgressData }) => {
     );
   }
 
-  // Get user progress for this challenge (dummy data or from API)
-  const initialProgress =
-    userProgressData?.find((p) => p.id.toString() === id)?.progress || 0;
-
-  const [progress, setProgress] = useState(initialProgress);
-
   const handleProgressChange = (e) => {
     const value = Math.min(100, Math.max(0, Number(e.target.value)));
     setProgress(value);
-    // TODO: send API to save user progress
+  };
+
+  const saveProgress = async () => {
+    if (!user) return;
+    try {
+      const docRef = doc(db, "userProgress", `${user.uid}_${challenge.id}`);
+      await setDoc(docRef, {
+        uid: user.uid,
+        challengeId: challenge.id,
+        progress,
+      });
+      alert(`Progress for "${challenge.title}" saved!`);
+    } catch (err) {
+      console.error("Error saving progress:", err);
+      alert("Failed to save progress.");
+    }
   };
 
   return (
@@ -81,7 +153,7 @@ const MyActivityDetailPage = ({ isLoggedIn, userProgressData }) => {
         </div>
 
         <button
-          onClick={() => alert(`Progress for "${challenge.title}" saved!`)}
+          onClick={saveProgress}
           className="px-6 py-3 rounded-xl bg-accent font-semibold text-lg mx-auto block mt-4"
         >
           Save Progress

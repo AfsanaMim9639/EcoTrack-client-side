@@ -1,19 +1,69 @@
 // src/pages/MyActivitiesPage.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase/firebase.config";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+} from "firebase/firestore";
 import activeChallengesData from "../data/activeChallenges.json";
 
-const MyActivitiesPage = ({ isLoggedIn }) => {
+const db = getFirestore();
+
+const MyActivitiesPage = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [userProgress, setUserProgress] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Dummy user progress (normally from API)
-  const [userProgress, setUserProgress] = useState([
-    { id: 1, progress: 60 },
-    { id: 2, progress: 25 },
-    { id: 3, progress: 90 },
-  ]);
+  // Firebase auth listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
 
-  if (!isLoggedIn) {
+    return () => unsubscribe();
+  }, []);
+
+  // Real-time listener for user progress
+  useEffect(() => {
+    if (!user) return;
+
+    setLoading(true);
+    const progressRef = collection(db, `users/${user.uid}/progress`);
+
+    const unsubscribe = onSnapshot(progressRef, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        challengeId: Number(doc.id),
+        ...doc.data(),
+      }));
+      setUserProgress(data);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Create a map for fast challenge lookup
+  const challengesMap = new Map(activeChallengesData.map((c) => [c.id, c]));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-forest text-white">
+        <p>Loading your activities...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-forest text-white text-center">
         <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
@@ -33,43 +83,51 @@ const MyActivitiesPage = ({ isLoggedIn }) => {
       <h1 className="text-4xl font-bold mb-8 text-center mt-20">My Activities</h1>
 
       <div className="max-w-4xl mx-auto flex flex-col gap-6">
-        {userProgress.map((item) => {
-          const challenge = activeChallengesData.find(c => c.id === item.id);
-          if (!challenge) return null;
+        {userProgress.length === 0 ? (
+          <p className="text-center text-white/70">
+            You haven’t joined any challenges yet.
+          </p>
+        ) : (
+          userProgress.map((item) => {
+            const challenge = challengesMap.get(item.challengeId);
+            if (!challenge) return null;
 
-          return (
-            <div
-              key={item.id}
-              className="bg-white/10 p-4 rounded-xl border border-accent flex flex-col md:flex-row items-center gap-4"
-            >
-              <img
-                src={challenge.image}
-                alt={challenge.title}
-                className="w-24 h-24 rounded-2xl object-cover"
-              />
-              <div className="flex-1">
-                <h2 className="text-xl font-bold">{challenge.title}</h2>
-                <p className="text-accent font-semibold">{challenge.category}</p>
-
-                {/* Progress Bar */}
-                <div className="mt-2 w-full bg-white/20 h-4 rounded-lg">
-                  <div
-                    className="h-4 rounded-lg bg-accent"
-                    style={{ width: `${item.progress}%` }}
-                  ></div>
-                </div>
-                <p className="text-white/80 text-sm mt-1">{item.progress}% completed</p>
-              </div>
-
-              <button
-                onClick={() => navigate(`/challenges/join/${challenge.id}`)}
-                className="px-4 py-2 rounded-xl bg-accent font-semibold text-sm"
+            return (
+              <div
+                key={item.challengeId}
+                className="bg-white/10 p-4 rounded-xl border border-accent flex flex-col md:flex-row items-center gap-4"
               >
-                Update Progress
-              </button>
-            </div>
-          );
-        })}
+                <img
+                  src={challenge.image}
+                  alt={challenge.title}
+                  className="w-24 h-24 rounded-2xl object-cover"
+                />
+                <div className="flex-1">
+                  <h2 className="text-xl font-bold">{challenge.title}</h2>
+                  <p className="text-accent font-semibold">{challenge.category}</p>
+
+                  {/* Progress Bar */}
+                  <div className="mt-2 w-full bg-white/20 h-4 rounded-lg">
+                    <div
+                      className="h-4 rounded-lg bg-accent"
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-white/80 text-sm mt-1">
+                    {item.progress}% completed
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => navigate(`/challenges/join/${challenge.id}`)}
+                  className="px-4 py-2 rounded-xl bg-accent font-semibold text-sm"
+                >
+                  Update Progress
+                </button>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
