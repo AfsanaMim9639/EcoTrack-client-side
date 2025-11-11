@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { FaGoogle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Protected route redirect info
+  const from = location.state?.from?.pathname || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +23,7 @@ const LoginPage = () => {
       setLoading(false);
       if (email === "user@example.com" && password === "123456") {
         toast.success("Login successful!");
-        navigate("/"); // redirect to home
+        navigate(from, { replace: true }); // 🔹 redirect to intended route
       } else {
         toast.error("Invalid email or password");
       }
