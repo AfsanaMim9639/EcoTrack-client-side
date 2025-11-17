@@ -1,6 +1,6 @@
-// src/pages/AddChallengePage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
 const AddChallengePage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
@@ -8,16 +8,54 @@ const AddChallengePage = ({ isLoggedIn }) => {
   const [category, setCategory] = useState("");
   const [metric, setMetric] = useState("");
   const [image, setImage] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
-  const handleSubmit = (e) => {
+  // Get logged-in Firebase user's email
+  useEffect(() => {
+    if (isLoggedIn) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) setUserEmail(user.email);
+    }
+  }, [isLoggedIn]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Here you would normally call API to save challenge
-    const newChallenge = { title, category, metric, image };
-    console.log("New Challenge:", newChallenge);
+    if (!startDate || !endDate) {
+      alert("Please select start and end dates!");
+      return;
+    }
 
-    // Navigate back to challenges page after adding
-    navigate("/challenges");
+    const newChallenge = {
+      title,
+      category,
+      impactMetric: metric,
+      imageUrl: image,
+      participants: 0,
+      createdBy: userEmail || "admin@ecotrack.com",
+      startDate,
+      endDate,
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/api/challenges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newChallenge),
+      });
+
+      if (!res.ok) throw new Error("Failed to add challenge");
+
+      const data = await res.json();
+      console.log("Challenge added:", data);
+      navigate("/challenges");
+    } catch (err) {
+      console.error("Error adding challenge:", err);
+      alert("Failed to add challenge. Check console for details.");
+    }
   };
 
   if (!isLoggedIn) {
@@ -75,6 +113,28 @@ const AddChallengePage = ({ isLoggedIn }) => {
           className="p-3 rounded bg-white/10 border border-white/20 text-white"
           required
         />
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="block mb-1">Start Date</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="p-2 rounded bg-white/10 border border-white/20 text-white w-full"
+              required
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block mb-1">End Date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="p-2 rounded bg-white/10 border border-white/20 text-white w-full"
+              required
+            />
+          </div>
+        </div>
 
         <button
           type="submit"

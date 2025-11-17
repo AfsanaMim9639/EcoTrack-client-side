@@ -1,28 +1,33 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import { PORT, MONGO_URI } from "./config.js";
-
-// Import your route files
+import dotenv from "dotenv";
+import statsRoutes from "./routes/statsRoutes.js";
 import challengeRoutes from "./routes/challengeRoutes.js";
-import userChallengeRoutes from "./routes/userChallengeRoutes.js";
-import tipRoutes from "./routes/tipRoutes.js";
+import tipsRoutes from "./routes/tipsRoutes.js"; // ✅ import tips routes
 import eventRoutes from "./routes/eventRoutes.js";
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
+// Environment variables
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
+
+// Test MongoDB connection
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log("❌ DB Error:", err));
 
-// Use API routes
+// Routes
 app.use("/api/challenges", challengeRoutes);
-app.use("/api/userChallenges", userChallengeRoutes);
-app.use("/api/tips", tipRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/api/tips", tipsRoutes); // ✅ add tips route
 app.use("/api/events", eventRoutes);
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

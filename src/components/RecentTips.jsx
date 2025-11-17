@@ -1,9 +1,59 @@
-import React, { useState } from "react";
-import recentTips from "../data/recentTips.json";
+import React, { useState, useEffect } from "react";
 import { FaArrowUp, FaUser, FaClock, FaLightbulb } from "react-icons/fa";
 
 const RecentTips = () => {
+  const [tips, setTips] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTips = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch("http://localhost:5000/api/tips", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        if (Array.isArray(data)) setTips(data);
+        else throw new Error("Invalid data format received");
+      } catch (err) {
+        console.error("Error fetching tips:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTips();
+  }, []);
+
+  if (loading)
+    return (
+      <p className="text-center text-lg text-white mt-12">
+        Loading tips...
+      </p>
+    );
+
+  if (error)
+    return (
+      <p className="text-center text-lg text-red-400 mt-12">
+        Error loading tips: {error}
+      </p>
+    );
+
+  if (tips.length === 0)
+    return (
+      <p className="text-center text-lg text-white mt-12">
+        No tips found.
+      </p>
+    );
 
   return (
     <section 
@@ -19,7 +69,7 @@ const RecentTips = () => {
           backgroundAttachment: "fixed"
         }}
       ></div>
-      
+
       {/* Dark Gradient Overlay for readability */}
       <div 
         className="absolute inset-0"
@@ -33,7 +83,6 @@ const RecentTips = () => {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-leaf/5 rounded-full blur-3xl"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
         {/* Section Header */}
         <div className="flex items-center justify-between mb-12">
           <div>
@@ -56,44 +105,25 @@ const RecentTips = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recentTips.slice(0, 6).map((tip) => (
+          {tips.slice(0, 6).map((tip) => (
             <div
-              key={tip.id}
-              onMouseEnter={() => setHoveredId(tip.id)}
+              key={tip._id}
+              onMouseEnter={() => setHoveredId(tip._id)}
               onMouseLeave={() => setHoveredId(null)}
               className="group relative overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
               style={{
                 background: "linear-gradient(135deg, rgba(74, 222, 128, 0.08), rgba(34, 197, 94, 0.05))",
                 backdropFilter: "blur(10px)",
-                border: hoveredId === tip.id 
+                border: hoveredId === tip._id 
                   ? "2px solid rgba(74, 222, 128, 0.5)" 
                   : "1px solid rgba(74, 222, 128, 0.2)",
-                boxShadow: hoveredId === tip.id
+                boxShadow: hoveredId === tip._id
                   ? "0 20px 60px rgba(74, 222, 128, 0.3)"
                   : "0 8px 32px rgba(0, 0, 0, 0.2)"
               }}
             >
-              {/* Animated Gradient Overlay */}
-              <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{
-                  background: "linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(34, 197, 94, 0.1))"
-                }}
-              ></div>
-
-              {/* Glowing Top Line */}
-              <div 
-                className="absolute top-0 left-0 w-full h-1 transition-all duration-300"
-                style={{
-                  background: "linear-gradient(90deg, var(--accent), var(--leaf))",
-                  boxShadow: hoveredId === tip.id ? "0 0 15px var(--accent)" : "none"
-                }}
-              ></div>
-
-              {/* Content Container */}
+              {/* Content */}
               <div className="relative z-10 p-6">
-                
-                {/* Category Badge */}
                 <div className="mb-4">
                   <span 
                     className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold"
@@ -104,53 +134,44 @@ const RecentTips = () => {
                     }}
                   >
                     <FaLightbulb className="text-[10px]" />
-                    Eco Tip
+                    {tip.category || "Tip"}
                   </span>
                 </div>
 
-                {/* Title */}
                 <h3 className="text-xl font-bold text-white mb-3 group-hover:text-accent transition-colors duration-300 line-clamp-2">
                   {tip.title}
                 </h3>
 
-                {/* Preview Text */}
                 <p className="text-white/70 text-sm leading-relaxed mb-4 line-clamp-3">
-                  {tip.preview}
+                  {tip.content}
                 </p>
 
-                {/* Divider */}
-                <div className="w-full h-px bg-white/10 mb-4"></div>
-
-                {/* Author & Date Section */}
                 <div className="flex items-center justify-between text-xs mb-4">
                   <div className="flex items-center gap-2 text-white/60">
                     <div 
                       className="w-8 h-8 rounded-full flex items-center justify-center"
-                      style={{
-                        background: "rgba(74, 222, 128, 0.2)"
-                      }}
+                      style={{ background: "rgba(74, 222, 128, 0.2)" }}
                     >
                       <FaUser className="text-accent text-xs" />
                     </div>
                     <span className="font-medium">{tip.authorName}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-1 text-white/50">
                     <FaClock className="text-[10px]" />
-                    <span>{new Date(tip.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                    <span>{new Date(tip.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
 
-                {/* Upvotes Section */}
                 <div className="flex items-center justify-between">
                   <button 
                     className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105"
                     style={{
-                      background: hoveredId === tip.id 
+                      background: hoveredId === tip._id 
                         ? "var(--accent)" 
                         : "rgba(74, 222, 128, 0.1)",
-                      color: hoveredId === tip.id ? "white" : "var(--accent)",
-                      border: hoveredId === tip.id ? "none" : "1px solid var(--accent)"
+                      color: hoveredId === tip._id ? "white" : "var(--accent)",
+                      border: hoveredId === tip._id ? "none" : "1px solid var(--accent)"
                     }}
                   >
                     <FaArrowUp className="text-xs" />
@@ -162,20 +183,10 @@ const RecentTips = () => {
                   </span>
                 </div>
               </div>
-
-              {/* Decorative Corner Element */}
-              <div 
-                className="absolute -bottom-6 -right-6 w-32 h-32 rounded-full opacity-5 group-hover:opacity-10 transition-opacity duration-300"
-                style={{
-                  background: "var(--accent)",
-                  filter: "blur(30px)"
-                }}
-              ></div>
             </div>
           ))}
         </div>
 
-        {/* View All Button */}
         <div className="text-center mt-12">
           <button
             className="group px-8 py-3 rounded-xl font-semibold text-base transition-all duration-300 hover:scale-105 relative overflow-hidden"
@@ -185,25 +196,7 @@ const RecentTips = () => {
               boxShadow: "0 8px 30px rgba(74, 222, 128, 0.3)",
             }}
           >
-            <span className="relative z-10 flex items-center gap-2">
-              View All Tips
-              <svg
-                className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </span>
-            
-            {/* Animated background on hover */}
-            <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            View All Tips
           </button>
         </div>
       </div>

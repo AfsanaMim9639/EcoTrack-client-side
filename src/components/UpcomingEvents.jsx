@@ -1,9 +1,24 @@
-import React, { useState } from "react";
-import events from "../data/upcomingEvents.json";
+import React, { useState, useEffect } from "react";
+
 import { FaCalendarAlt, FaMapMarkerAlt, FaClock, FaTicketAlt } from "react-icons/fa";
 
+
 const UpcomingEvents = () => {
+  const [events, setEvents] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/events");
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error("Error loading events:", err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <section className="relative w-full py-16 text-white overflow-hidden">

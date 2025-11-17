@@ -1,24 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import activeChallengesData from "../data/activeChallenges.json";
 
-const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
-  const [isExpanded, setIsExpanded] = useState(showAll);
+const ActiveChallenges = ({ 
+  showAll = false, 
+  pageTitle, 
+  isLoggedIn, 
+  user,
+  challenges: propChallenges // Props থেকে challenges receive
+}) => {
+  const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(showAll);
 
-  // If user is not logged in, render nothing or redirect
-  if (!isLoggedIn) {
-    return null; // or navigate("/login") if you want automatic redirect
-  }
+  // Fetch challenges from backend
+  useEffect(() => {
+    // যদি props থেকে challenges আসে, তাহলে সেটা use করো
+    if (propChallenges && Array.isArray(propChallenges)) {
+      setChallenges(propChallenges);
+      setLoading(false);
+      return;
+    }
 
-  const displayedChallenges = isExpanded
-    ? activeChallengesData
-    : activeChallengesData.slice(0, 6);
+    // নাহলে backend থেকে fetch করো
+    const fetchChallenges = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch("http://localhost:5000/api/challenges");
+
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        console.log("Fetched Challenges:", data);
+
+        // Handle different response formats
+        if (data.success && Array.isArray(data.data)) {
+          setChallenges(data.data);
+        } else if (Array.isArray(data)) {
+          setChallenges(data);
+        } else if (data.challenges && Array.isArray(data.challenges)) {
+          setChallenges(data.challenges);
+        } else {
+          throw new Error("Invalid data format received");
+        }
+      } catch (err) {
+        console.error("Error fetching challenges:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChallenges();
+  }, [propChallenges]);
+
+  // Update challenges when propChallenges change
+  useEffect(() => {
+    if (propChallenges && Array.isArray(propChallenges)) {
+      setChallenges(propChallenges);
+      setLoading(false);
+    }
+  }, [propChallenges]);
+
+  const displayedChallenges = isExpanded ? challenges : challenges.slice(0, 6);
+
+  if (loading)
+    return <p className="text-center text-lg text-white mt-12">Loading challenges...</p>;
+
+  if (error)
+    return <p className="text-center text-lg text-red-400 mt-12">Error loading challenges: {error}</p>;
+
+  if (!challenges.length)
+    return <p className="text-center text-lg text-white mt-12">No challenges found.</p>;
 
   return (
     <section className="w-full py-16 px-6 md:px-12 bg-forest text-white">
       <div className="max-w-7xl mx-auto">
-
         {pageTitle && (
           <h2 className="text-3xl md:text-4xl font-bold mb-16 text-accent text-center">
             {pageTitle}
@@ -26,66 +86,103 @@ const ActiveChallenges = ({ showAll = false, pageTitle, isLoggedIn }) => {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-12">
-          {displayedChallenges.map((challenge) => (
-            <div key={challenge.id} className="flex items-center justify-center">
-              <div className="relative">
-                <div className="flex items-center justify-center">
-                  {/* Challenge Image */}
-                  <div
-                    className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 z-10 cursor-pointer"
-                    style={{
-                      backgroundImage: `url(${challenge.image})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                    onClick={() => navigate(`/challenges/${challenge.id}`)}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                  </div>
+          {displayedChallenges.map((challenge) => {
+            // Ensure _id exists, otherwise fallback
+            const challengeId = challenge._id || challenge.id || Math.random().toString(36).substr(2, 9);
 
-                  {/* Info Card */}
-                  <div
-                    className="absolute right-28 md:right-32 w-40 md:w-48 p-3 md:p-4 rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105 z-20"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(10, 46, 31, 0.95), rgba(16, 43, 30, 0.95))",
-                      backdropFilter: "blur(12px)",
-                      border: "2px solid rgba(74, 222, 128, 0.5)",
-                    }}
-                  >
+            return (
+              <div key={challengeId} className="flex items-center justify-center">
+                <div className="relative">
+                  <div className="flex items-center justify-center">
                     <div
-                      className="absolute top-0 left-0 w-full h-1"
-                      style={{ background: "linear-gradient(90deg, var(--accent), var(--leaf))" }}
-                    ></div>
-                    <div className="text-left">
-                      <h3 className="text-base md:text-lg font-bold text-white mb-1">{challenge.title}</h3>
-                      <p className="text-accent font-semibold text-xs mb-2">{challenge.category}</p>
-                      <p className="text-white/80 text-xs leading-relaxed mb-2">{challenge.metric}</p>
+                      className="relative w-56 h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-2xl flex-shrink-0 z-10 cursor-pointer"
+                      style={{
+                        backgroundImage: `url(${challenge.imageUrl || "/placeholder.jpg"})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                      onClick={() => navigate(`/challenges/${challengeId}`)}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    </div>
 
-                      {/* Join Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/challenges/join/${challenge.id}`);
-                        }}
-                        className="w-full px-3 py-1 rounded-lg font-medium text-xs transition-all duration-300 hover:scale-105"
+                    <div
+                      className="absolute right-28 md:right-32 w-40 md:w-48 p-3 md:p-4 rounded-xl shadow-2xl transition-transform duration-300 hover:scale-105 z-20"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(10, 46, 31, 0.95), rgba(16, 43, 30, 0.95))",
+                        backdropFilter: "blur(12px)",
+                        border: "2px solid rgba(74, 222, 128, 0.5)",
+                      }}
+                    >
+                      <div
+                        className="absolute top-0 left-0 w-full h-1"
                         style={{
-                          background: "var(--accent)",
-                          color: "white",
-                          boxShadow: "0 4px 15px rgba(74, 222, 128, 0.3)",
+                          background: "linear-gradient(90deg, var(--accent), var(--leaf))",
                         }}
-                      >
-                        Join
-                      </button>
+                      ></div>
+                      <div className="text-left">
+                        <h3 className="text-base md:text-lg font-bold text-white mb-1">
+                          {challenge.title}
+                        </h3>
+                        <p className="text-accent font-semibold text-xs mb-2">
+                          {challenge.category}
+                        </p>
+                        <p className="text-white/80 text-xs leading-relaxed mb-2">
+                          {challenge.impactMetric}
+                        </p>
+
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!isLoggedIn || !user?.email) {
+                              alert("Please login to join a challenge!");
+                              return;
+                            }
+
+                            try {
+                              const res = await fetch(
+                                `http://localhost:5000/api/challenges/join/${challengeId}`,
+                                {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ userId: user.email }),
+                                }
+                              );
+
+                              if (!res.ok) {
+                                const errorData = await res.json();
+                                throw new Error(errorData.message || "Failed to join");
+                              }
+
+                              const data = await res.json();
+                              console.log("Joined challenge:", data);
+                              alert("You joined the challenge!");
+                            } catch (err) {
+                              console.error("Join error:", err);
+                              alert(`Error: ${err.message}`);
+                            }
+                          }}
+                          className="w-full px-3 py-1 rounded-lg font-medium text-xs transition-all duration-300 hover:scale-105"
+                          style={{
+                            background: "var(--accent)",
+                            color: "white",
+                            boxShadow: "0 4px 15px rgba(74, 222, 128, 0.3)",
+                          }}
+                        >
+                          Join
+                        </button>
+                      </div>
                     </div>
                   </div>
-
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {!showAll && (
+        {/* See More Button - শুধু যদি showAll false হয় এবং 6 এর বেশি challenges থাকে */}
+        {!showAll && challenges.length > 6 && (
           <div className="text-center mt-16">
             <button
               onClick={() => navigate("/challenges")}
