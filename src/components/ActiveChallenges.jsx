@@ -29,12 +29,13 @@ const ActiveChallenges = ({
         setLoading(true);
         setError(null);
 
-        const res = await fetch("http://localhost:5000/api/challenges");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges`);
 
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
         const data = await res.json();
         console.log("Fetched Challenges:", data);
+
 
         // Handle different response formats
         if (data.success && Array.isArray(data.data)) {
@@ -141,8 +142,7 @@ const ActiveChallenges = ({
                             }
 
                             try {
-                              const res = await fetch(
-                                `http://localhost:5000/api/challenges/join/${challengeId}`,
+                              const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges/join/${challengeId}`,
                                 {
                                   method: "POST",
                                   headers: { "Content-Type": "application/json" },
