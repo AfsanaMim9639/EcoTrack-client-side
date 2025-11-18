@@ -41,7 +41,7 @@ const AddChallengePage = ({ isLoggedIn }) => {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/challenges", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newChallenge),
