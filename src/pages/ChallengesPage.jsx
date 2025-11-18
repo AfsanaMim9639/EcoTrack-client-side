@@ -43,7 +43,7 @@ const ChallengesPage = () => {
       params.append("page", pagination.currentPage);
       params.append("limit", 20);
 
-      const res = await fetch(`http://localhost:5000/api/challenges?${params.toString()}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges?${params.toString()}`);
       const result = await res.json();
 
       // Handle both response formats: {success, data} and direct array
