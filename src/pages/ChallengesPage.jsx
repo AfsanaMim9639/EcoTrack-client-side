@@ -42,8 +42,15 @@ const ChallengesPage = () => {
       if (filters.maxParticipants) params.append("maxParticipants", filters.maxParticipants);
       params.append("page", pagination.currentPage);
       params.append("limit", 20);
-
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges?${params.toString()}`);
+      console.log("Fetching URL:", `${import.meta.env.VITE_API_URL}/api/challenges?${params.toString()}`);
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("Fetch error:", res.status, errText);
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
       const result = await res.json();
 
       // Handle both response formats: {success, data} and direct array
@@ -105,17 +112,7 @@ const ChallengesPage = () => {
     setPagination(prev => ({ ...prev, currentPage: 1 }));
   };
 
-  // Fetch data from backend
-    fetch("/api/challenges")
-      .then(res => res.json())
-      .then(data => {
-        setChallenges(data);
-        setLoading(false); // hide spinner when data arrives
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+   
   
 
   if (loading) return <GlobalSpinner />;
