@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ActiveChallenges from "../components/ActiveChallenges";
 import GlobalSpinner from "../components/GlobalSpinner";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://ecotrack-server-side.vercel.app';
+
 const ChallengesPage = () => {
   const navigate = useNavigate();
   const [challenges, setChallenges] = useState([]);
@@ -24,12 +26,11 @@ const ChallengesPage = () => {
     totalChallenges: 0
   });
 
-  // Fetch challenges from MongoDB backend with search and filters
   const fetchChallenges = async () => {
     try {
       setLoading(true);
+      setError(null); // Reset error
 
-      // Build query parameters
       const params = new URLSearchParams();
       
       if (searchQuery.trim()) params.append("search", searchQuery.trim());
@@ -42,18 +43,21 @@ const ChallengesPage = () => {
       if (filters.maxParticipants) params.append("maxParticipants", filters.maxParticipants);
       params.append("page", pagination.currentPage);
       params.append("limit", 20);
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges?${params.toString()}`);
-      console.log("Fetching URL:", `${import.meta.env.VITE_API_URL}/api/challenges?${params.toString()}`);
+
+      const url = `${API_BASE_URL}/api/challenges?${params.toString()}`;
+      console.log("🔗 Fetching:", url);
+
+      const res = await fetch(url);
 
       if (!res.ok) {
         const errText = await res.text();
-        console.error("Fetch error:", res.status, errText);
+        console.error("❌ Fetch error:", res.status, errText);
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
       const result = await res.json();
+      console.log("✅ Response:", result);
 
-      // Handle both response formats: {success, data} and direct array
       if (result.success) {
         setChallenges(result.data || []);
         setPagination(result.pagination || {
@@ -62,7 +66,6 @@ const ChallengesPage = () => {
           totalChallenges: result.data?.length || 0
         });
       } else if (Array.isArray(result)) {
-        // Direct array response (old format)
         setChallenges(result);
         setPagination({
           currentPage: 1,
@@ -74,23 +77,24 @@ const ChallengesPage = () => {
         setChallenges([]);
       }
     } catch (err) {
-      console.error("❌ Error fetching challenges:", err);
+      console.error("❌ Error:", err);
+      setError(err.message);
       setChallenges([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch challenges when search query or filters change
   useEffect(() => {
-    // Debounce search - wait 500ms after user stops typing
     const timeoutId = setTimeout(() => {
       fetchChallenges();
     }, 500);
 
     return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filters, pagination.currentPage]);
 
+  
   // Handle filter changes
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
