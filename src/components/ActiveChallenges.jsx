@@ -28,9 +28,24 @@ const ActiveChallenges = ({
         setLoading(true);
         setError(null);
 
-        console.log("🔍 Fetching from:", `${import.meta.env.VITE_API_URL}/api/challenges`);
+        const apiUrl = `${import.meta.env.VITE_API_URL}/api/challenges`;
+        console.log("🔍 API URL:", import.meta.env.VITE_API_URL);
+        console.log("🔍 Full URL:", apiUrl);
         
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/challenges`);
+        const res = await fetch(apiUrl);
+        
+        console.log("📊 Response Status:", res.status);
+        console.log("📊 Response OK:", res.ok);
+        
+        // Check content type
+        const contentType = res.headers.get("content-type");
+        console.log("📊 Content-Type:", contentType);
+
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          console.error("❌ HTML Response (first 300 chars):", text.substring(0, 300));
+          throw new Error(`Backend returned HTML instead of JSON. Status: ${res.status}`);
+        }
 
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -53,7 +68,7 @@ const ActiveChallenges = ({
 
         setChallenges(challengeData);
       } catch (err) {
-        console.error("❌ Error fetching challenges:", err);
+        console.error("❌ Full Error:", err);
         setError(err.message);
       } finally {
         setLoading(false);
