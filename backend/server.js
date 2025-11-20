@@ -56,11 +56,45 @@ try {
   console.error("❌ Firebase Admin initialization error:", error.message);
 }
 
-// MongoDB Atlas connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err.message));
+// MongoDB Atlas connection with better error handling
+let cached = globalThis.mongoose;
+
+if (!cached) cached = globalThis.mongoose = { conn: null, promise: null };
+
+const connectDB = async () => {
+  if (cached.conn) {
+    console.log("⚡ Using existing MongoDB connection");
+    return cached.conn;
+  }
+
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI environment variable is not defined");
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(process.env.MONGO_URI).then((mongoose) => {
+      console.log("✅ MongoDB connected successfully");
+      console.log("📊 Database:", mongoose.connection.name);
+      return mongoose;
+    });
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+};
+
+
+connectDB();
+console.log("🔍 Loaded MONGO_URI:", process.env.MONGO_URI);
+
+// Handle MongoDB connection events
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ MongoDB disconnected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB error:', err);
+});
 
 // Middleware to verify Firebase token
 export const verifyToken = async (req, res, next) => {
@@ -88,6 +122,19 @@ app.get("/", (req, res) => {
   });
 });
 
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Database connection failed", 
+      error: error.message 
+    });
+  }
+});
+
 // API Routes
 app.use("/api/stats", statsRoutes);
 app.use("/api/challenges", challengeRoutes);
@@ -110,6 +157,6 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
-
+console.log("test")
 // IMPORTANT: Vercel এর জন্য export (app.listen() না রাখা)
 export default app;

@@ -13,16 +13,16 @@ const ActiveChallenges = ({
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ একটা useEffect এই সব handle করবে
+ 
   useEffect(() => {
-    // যদি props থেকে challenges আসে
+    
     if (propChallenges && Array.isArray(propChallenges)) {
       setChallenges(propChallenges);
       setLoading(false);
       return;
     }
 
-    // নাহলে backend থেকে fetch করো
+    
     const fetchChallenges = async () => {
       try {
         setLoading(true);
@@ -77,7 +77,7 @@ const ActiveChallenges = ({
 
     fetchChallenges();
   }, [propChallenges]); // ✅ শুধু propChallenges dependency
-
+console.log("test")
   // Display logic
   const displayedChallenges = showAll ? challenges : challenges.slice(0, 6);
 
